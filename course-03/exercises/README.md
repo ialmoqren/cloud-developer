@@ -1,5 +1,10 @@
-# Docker Hub Images 
-https://hub.docker.com/u/ialmoqren
+# Docker Hub Images
+
+The docker images are pushed to docker hub, you can find them [here](
+https://hub.docker.com/u/ialmoqren)
+
+# Travis CI Screenshots
+Travis CI screenshots are on `screenshots/` directory
 
 # Build and Push Docker Images
 
