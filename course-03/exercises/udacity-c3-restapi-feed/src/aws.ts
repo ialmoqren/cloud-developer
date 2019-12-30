@@ -20,11 +20,11 @@ export const s3 = new AWS.S3({
  * @Returns:
  *    a url as a string
  */
-export function getGetSignedUrl( key: string ): string{
+export async function getGetSignedUrl( key: string ){
 
   const signedUrlExpireSeconds = 60 * 5
 
-    const url = s3.getSignedUrl('getObject', {
+    const url = await s3.getSignedUrlPromise('getObject', {
         Bucket: c.aws_media_bucket,
         Key: key,
         Expires: signedUrlExpireSeconds
@@ -39,11 +39,11 @@ export function getGetSignedUrl( key: string ): string{
  * @Returns:
  *    a url as a string
  */
-export function getPutSignedUrl( key: string ){
+export async function getPutSignedUrl( key: string ){
 
     const signedUrlExpireSeconds = 60 * 5
 
-    const url = s3.getSignedUrl('putObject', {
+    const url = await s3.getSignedUrlPromise('putObject', {
       Bucket: c.aws_media_bucket,
       Key: key,
       Expires: signedUrlExpireSeconds
