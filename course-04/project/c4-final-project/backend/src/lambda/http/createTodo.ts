@@ -1,20 +1,12 @@
 import 'source-map-support/register'
-
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { v4 } from 'uuid'
-import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
-import * as AWSXRay from 'aws-xray-sdk'
-const XAWS = AWSXRay.captureAWS(AWS)
-const docClient = new XAWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
+import { TodoAccess } from '../../dataLayer/todosAccess'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
-
-  // TODO: Implement creating a new TODO item
   const itemId = v4()
   const userId = getUserId(event)
   const item = {
@@ -24,11 +16,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     ...newTodo,
     done: false
   }
-
-  await docClient.put({
-    TableName: todosTable,
-    Item: item
-  }).promise()
+  const todoAccess = new TodoAccess
+  await todoAccess.createTodo(item)
 
   return {
     statusCode: 200,

@@ -1,26 +1,13 @@
 import 'source-map-support/register'
-
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
 import { getUserId } from '../utils'
+import { TodoAccess } from '../../dataLayer/todosAccess'
 
-const XAWS = AWSXRay.captureAWS(AWS)
-const docClient = new XAWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  // TODO: Get all TODO items for a current user
   console.log('processing event: ', event)
   const userId = getUserId(event)
-
-  const result = await docClient.query({
-    TableName: todosTable,
-    KeyConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': userId
-    },
-    ScanIndexForward: false
-  }).promise()
+  const todoAccess = new TodoAccess
+  const result = await todoAccess.getTodos(userId)
 
   return {
     statusCode: 200,
