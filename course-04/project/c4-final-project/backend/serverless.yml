@@ -6,6 +6,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
+  - serverless-plugin-tracing
 
 provider:
   tracing:
@@ -23,6 +24,14 @@ provider:
     S3_BUCKET: todos-app-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     INDEX_NAME: UserIndex
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
 
 custom:
   documentation:
