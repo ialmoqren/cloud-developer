@@ -1,14 +1,16 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
-import { S3, DynamoDB } from 'aws-sdk'
+import * as AWSXRay from 'aws-xray-sdk'
 
 const bucketName = process.env.S3_BUCKET
-const s3 = new S3({
+const XAWS = AWSXRay.captureAWS(AWS)
+const s3 = new XAWS.S3({
   signatureVersion: 'v4'
 })
-const docClient = new DynamoDB.DocumentClient()
+const docClient = new XAWS.DynamoDB.DocumentClient()
 const tableName = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {

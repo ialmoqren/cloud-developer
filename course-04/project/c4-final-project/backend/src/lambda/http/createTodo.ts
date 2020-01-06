@@ -4,9 +4,11 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { v4 } from 'uuid'
-import { DynamoDB } from 'aws-sdk'
+import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
-const docClient = new DynamoDB.DocumentClient()
+import * as AWSXRay from 'aws-xray-sdk'
+const XAWS = AWSXRay.captureAWS(AWS)
+const docClient = new XAWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {

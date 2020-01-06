@@ -1,10 +1,12 @@
 import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import * as AWS from 'aws-sdk'
 import { getUserId } from '../utils'
+import * as AWSXRay from 'aws-xray-sdk'
 
-import { DynamoDB } from 'aws-sdk'
-const docClient = new DynamoDB.DocumentClient()
+const XAWS = AWSXRay.captureAWS(AWS)
+const docClient = new XAWS.DynamoDB.DocumentClient()
 const tableName = process.env.TODOS_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -25,8 +27,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    body: JSON.stringify({
-      todoId
-    })
+    body: 'Item deleted'
   }
 }
